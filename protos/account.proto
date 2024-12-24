@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package trading_account;
+
+import "google/protobuf/timestamp.proto";
+
+// Account Trade Mode Enumeration
+enum AccountTradeMode {
+    ACCOUNT_TRADE_MODE_DEMO = 0;
+    ACCOUNT_TRADE_MODE_CONTEST = 1;
+    ACCOUNT_TRADE_MODE_REAL = 2;
+}
+
+// Account Stopout Mode Enumeration
+enum AccountStopoutMode {
+    ACCOUNT_STOPOUT_MODE_PERCENT = 0;
+    ACCOUNT_STOPOUT_MODE_MONEY = 1;
+}
+
+// Account Margin Mode Enumeration
+enum AccountMarginMode {
+    ACCOUNT_MARGIN_MODE_RETAIL_NETTING = 0;
+    ACCOUNT_MARGIN_MODE_EXCHANGE = 1;
+    ACCOUNT_MARGIN_MODE_RETAIL_HEDGING = 2;
+}
+
+// Comprehensive Account Information Message
+message AccountInfo {
+    // Integer Properties
+    int64 login = 1;
+    AccountTradeMode trade_mode = 2;
+    int64 leverage = 3;
+    int32 limit_orders = 4;
+    AccountStopoutMode margin_so_mode = 5;
+    AccountMarginMode margin_mode = 6;
+    int32 currency_digits = 7;
+
+    // Boolean Properties
+    bool trade_allowed = 8;
+    bool trade_expert = 9;
+    bool fifo_close = 10;
+    bool hedge_allowed = 11;
+
+    // Financial Properties
+    double balance = 12;
+    double credit = 13;
+    double profit = 14;
+    double equity = 15;
+    double margin = 16;
+    double margin_free = 17;
+    double margin_level = 18;
+
+    // Margin-related Properties
+    double margin_so_call = 19;
+    double margin_so_so = 20;
+    double margin_initial = 21;
+    double margin_maintenance = 22;
+
+    // Additional Financial Properties
+    double assets = 23;
+    double liabilities = 24;
+    double commission_blocked = 25;
+
+    // String Properties
+    string name = 26;
+    string server = 27;
+    string currency = 28;
+    string company = 29;
+
+    // Metadata
+    google.protobuf.Timestamp timestamp = 30;
+}
+
+// Account Information Service
+service AccountInfoService {
+    // Retrieve current account information
+    rpc GetAccountInfo(Empty) returns (AccountInfo) {}
+}
+
+message Empty {}

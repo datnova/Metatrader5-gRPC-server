@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "google/protobuf/timestamp.proto";
+import "common.proto";
+
+// Service definition for history deals operations
+service HistoryDealService {
+  // Get deals based on different filter criteria
+  rpc GetHistoryDeals(GetHistoryDealsRequest) returns (GetHistoryDealsResponse) {}
+}
+
+// Request message for getting history deals
+message GetHistoryDealsRequest {
+  oneof filter {
+    TimeFilter time_filter = 1;
+    int64 ticket = 2;        // Filter by order ticket
+    int64 position = 3;      // Filter by position ticket
+  }
+  optional string group = 4;  // Optional symbol group filter
+}
+
+// Time filter for history deals
+message TimeFilter {
+  google.protobuf.Timestamp date_from = 1;
+  google.protobuf.Timestamp date_to = 2;
+}
+
+// Response message containing history deals
+message GetHistoryDealsResponse {
+  repeated Deal deals = 1;
+  optional Error error = 2;
+}
+
+// Deal details
+message Deal {
+  // Integer properties
+  int64 ticket = 1;                    // DEAL_TICKET
+  int64 order = 2;                     // DEAL_ORDER
+  google.protobuf.Timestamp time = 3;  // DEAL_TIME
+  int64 time_msc = 4;                  // DEAL_TIME_MSC
+  DealType type = 5;                   // DEAL_TYPE
+  DealEntry entry = 6;                 // DEAL_ENTRY
+  int64 magic = 7;                     // DEAL_MAGIC
+  DealReason reason = 8;               // DEAL_REASON
+  int64 position_id = 9;               // DEAL_POSITION_ID
+
+  // Double properties
+  double volume = 10;                  // DEAL_VOLUME
+  double price = 11;                   // DEAL_PRICE
+  double commission = 12;              // DEAL_COMMISSION
+  double swap = 13;                    // DEAL_SWAP
+  double profit = 14;                  // DEAL_PROFIT
+  double fee = 15;                     // DEAL_FEE
+  double sl = 16;                      // DEAL_SL (Stop Loss)
+  double tp = 17;                      // DEAL_TP (Take Profit)
+
+  // String properties
+  string symbol = 18;                  // DEAL_SYMBOL
+  string comment = 19;                 // DEAL_COMMENT
+  string external_id = 20;             // DEAL_EXTERNAL_ID
+}
+
+// Deal type enumeration (ENUM_DEAL_TYPE)
+enum DealType {
+  DEAL_TYPE_UNSPECIFIED = 0;
+  DEAL_TYPE_BUY = 1;
+  DEAL_TYPE_SELL = 2;
+  DEAL_TYPE_BALANCE = 3;
+  DEAL_TYPE_CREDIT = 4;
+  DEAL_TYPE_CHARGE = 5;
+  DEAL_TYPE_CORRECTION = 6;
+  DEAL_TYPE_BONUS = 7;
+  DEAL_TYPE_COMMISSION = 8;
+  DEAL_TYPE_COMMISSION_DAILY = 9;
+  DEAL_TYPE_COMMISSION_MONTHLY = 10;
+  DEAL_TYPE_COMMISSION_AGENT_DAILY = 11;
+  DEAL_TYPE_COMMISSION_AGENT_MONTHLY = 12;
+  DEAL_TYPE_INTEREST = 13;
+  DEAL_TYPE_BUY_CANCELED = 14;
+  DEAL_TYPE_SELL_CANCELED = 15;
+  DEAL_TYPE_DIVIDEND = 16;
+  DEAL_TYPE_DIVIDEND_FRANKED = 17;
+  DEAL_TYPE_TAX = 18;
+}
+
+// Deal entry type enumeration (ENUM_DEAL_ENTRY)
+enum DealEntry {
+  DEAL_ENTRY_UNSPECIFIED = 0;
+  DEAL_ENTRY_IN = 1;           // Entry in
+  DEAL_ENTRY_OUT = 2;          // Entry out
+  DEAL_ENTRY_INOUT = 3;        // Reverse
+  DEAL_ENTRY_OUT_BY = 4;       // Close by opposite position
+}
+
+// Deal reason enumeration (ENUM_DEAL_REASON)
+enum DealReason {
+  DEAL_REASON_UNSPECIFIED = 0;
+  DEAL_REASON_CLIENT = 1;             // From desktop terminal
+  DEAL_REASON_MOBILE = 2;             // From mobile application
+  DEAL_REASON_WEB = 3;                // From web platform
+  DEAL_REASON_EXPERT = 4;             // From MQL5 program
+  DEAL_REASON_SL = 5;                 // Stop Loss activation
+  DEAL_REASON_TP = 6;                 // Take Profit activation
+  DEAL_REASON_SO = 7;                 // Stop Out event
+  DEAL_REASON_ROLLOVER = 8;           // Rollover
+  DEAL_REASON_VMARGIN = 9;            // Variation margin
+  DEAL_REASON_SPLIT = 10;             // Split
+  DEAL_REASON_CORPORATE_ACTION = 11;   // Corporate action
+}

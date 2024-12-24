@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "google/protobuf/timestamp.proto";
+import "common.proto";
+
+// Service definition for order operations
+service OrderService {
+  // Get orders based on different filter criteria
+  rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {}
+}
+
+// Request message for getting orders
+message GetOrdersRequest {
+  oneof filter {
+    string symbol = 1;  // Filter by specific symbol
+    string group = 2;   // Filter by group pattern (e.g., "*GBP*")
+    int64 ticket = 3;   // Filter by specific ticket number
+  }
+}
+
+// Response message containing orders
+message GetOrdersResponse {
+  repeated Order orders = 1;
+  optional Error error = 2;
+}
+
+// Order details
+message Order {
+  // Integer properties
+  int64 ticket = 1;
+  google.protobuf.Timestamp time_setup = 2;
+  google.protobuf.Timestamp time_expiration = 3;
+  google.protobuf.Timestamp time_done = 4;
+  int64 time_setup_msc = 5;
+  int64 time_done_msc = 6;
+  OrderType type = 7;
+  OrderState state = 8;
+  OrderTypeTime type_time = 9;
+  OrderTypeFilling type_filling = 10;
+  int64 magic = 11;
+  OrderReason reason = 12;
+  int64 position_id = 13;
+  int64 position_by_id = 14;
+
+  // Double properties
+  double volume_initial = 15;
+  double volume_current = 16;
+  double price_open = 17;
+  double sl = 18;  // Stop Loss
+  double tp = 19;  // Take Profit
+  double price_current = 20;
+  double price_stoplimit = 21;
+
+  // String properties
+  string symbol = 22;
+  string comment = 23;
+  string external_id = 24;
+}
+
+// Order type enumeration
+enum OrderType {
+  ORDER_TYPE_UNSPECIFIED = 0;
+  ORDER_TYPE_BUY = 1;                // Market Buy order
+  ORDER_TYPE_SELL = 2;               // Market Sell order
+  ORDER_TYPE_BUY_LIMIT = 3;          // Buy Limit pending order
+  ORDER_TYPE_SELL_LIMIT = 4;         // Sell Limit pending order
+  ORDER_TYPE_BUY_STOP = 5;           // Buy Stop pending order
+  ORDER_TYPE_SELL_STOP = 6;          // Sell Stop pending order
+  ORDER_TYPE_BUY_STOP_LIMIT = 7;     // Buy Stop Limit pending order
+  ORDER_TYPE_SELL_STOP_LIMIT = 8;    // Sell Stop Limit pending order
+  ORDER_TYPE_CLOSE_BY = 9;           // Close by opposite position
+}
+
+// Order state enumeration
+enum OrderState {
+  ORDER_STATE_UNSPECIFIED = 0;
+  ORDER_STATE_STARTED = 1;           // Order checked, but not yet accepted
+  ORDER_STATE_PLACED = 2;            // Order accepted
+  ORDER_STATE_CANCELED = 3;          // Order canceled by client
+  ORDER_STATE_PARTIAL = 4;           // Order partially executed
+  ORDER_STATE_FILLED = 5;            // Order fully executed
+  ORDER_STATE_REJECTED = 6;          // Order rejected
+  ORDER_STATE_EXPIRED = 7;           // Order expired
+  ORDER_STATE_REQUEST_ADD = 8;       // Order is being registered
+  ORDER_STATE_REQUEST_MODIFY = 9;    // Order is being modified
+  ORDER_STATE_REQUEST_CANCEL = 10;   // Order is being deleted
+}
+
+// Order type time enumeration
+enum OrderTypeTime {
+  ORDER_TIME_UNSPECIFIED = 0;
+  ORDER_TIME_GTC = 1;                // Good till cancel
+  ORDER_TIME_DAY = 2;                // Good till current trade day
+  ORDER_TIME_SPECIFIED = 3;          // Good till expired
+  ORDER_TIME_SPECIFIED_DAY = 4;      // Good till specified day
+}
+
+// Order type filling enumeration
+enum OrderTypeFilling {
+  ORDER_FILLING_UNSPECIFIED = 0;
+  ORDER_FILLING_FOK = 1;             // Fill or Kill
+  ORDER_FILLING_IOC = 2;             // Immediate or Cancel
+  ORDER_FILLING_BOC = 3;             // Book or Cancel
+  ORDER_FILLING_RETURN = 4;          // Return
+}
+
+// Order reason enumeration
+enum OrderReason {
+  ORDER_REASON_UNSPECIFIED = 0;
+  ORDER_REASON_CLIENT = 1;           // From desktop terminal
+  ORDER_REASON_MOBILE = 2;           // From mobile application
+  ORDER_REASON_WEB = 3;              // From web platform
+  ORDER_REASON_EXPERT = 4;           // From MQL5 program
+  ORDER_REASON_SL = 5;               // Stop Loss activation
+  ORDER_REASON_TP = 6;               // Take Profit activation
+  ORDER_REASON_SO = 7;               // Stop Out event
+}
