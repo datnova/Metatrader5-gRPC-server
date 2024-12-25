@@ -8,7 +8,7 @@ This project is a gRPC server for interacting with Metatrader 5, designed specif
 The project consists of two main packages:
 
 ### 1. MT5 gRPC Proto (`mt5-grpc-proto`)
-Protocol Buffers and gRPC service definitions package. Contains the contract between the MT5 gRPC server and its clients.
+Protocol Buffers and gRPC service definitions package. Contains the contract between the MT5 gRPC server and its clients. This package provides Python bindings to interact with the server and can be used as a foundation for creating client libraries in other programming languages.
 
 Installation:
 ```bash
@@ -18,7 +18,7 @@ pip install mt5-grpc-proto
 ### 2. MT5 gRPC Server (`mt5-grpc-server`)
 The server implementation that interfaces with MetaTrader 5 terminal.
 
-Installation:
+Installation (Windows only or using Wine on Linux/MacOS):
 ```bash
 pip install mt5-grpc-server
 ```
@@ -35,6 +35,7 @@ pip install mt5-grpc-server
 ## 💡 Key Benefits
 - Run MetaTrader 5 on Windows while accessing it from any OS
 - Build trading applications in any language that supports gRPC
+- Create client libraries based on the project's proto files for your preferred programming language
 - High-performance binary protocol communication
 - Bi-directional streaming capabilities
 - Type-safe API interface
