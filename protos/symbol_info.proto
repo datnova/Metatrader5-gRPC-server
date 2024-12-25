@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+// Symbol Information Message
+message SymbolInfo {
+  // Boolean Properties
+  bool custom = 1;
+  bool select = 2;
+  bool visible = 3;
+  bool spread_float = 4;
+  bool margin_hedged_use_leg = 5;
+
+  // Integer Properties
+  int32 chart_mode = 10;
+  int32 session_deals = 11;
+  int32 session_buy_orders = 12;
+  int32 session_sell_orders = 13;
+  int32 volume = 14;
+  int32 volumehigh = 15;
+  int32 volumelow = 16;
+  int32 digits = 17;
+  int32 spread = 18;
+  int32 ticks_bookdepth = 19;
+  int32 trade_calc_mode = 20;
+  int32 trade_mode = 21;
+  int32 trade_stops_level = 22;
+  int32 trade_freeze_level = 23;
+  int32 trade_exemode = 24;
+  int32 swap_mode = 25;
+  int32 swap_rollover3days = 26;
+  int32 expiration_mode = 27;
+  int32 filling_mode = 28;
+  int32 order_mode = 29;
+  int32 order_gtc_mode = 30;
+  int32 option_mode = 31;
+  int32 option_right = 32;
+
+  // Timestamp Properties
+  google.protobuf.Timestamp time = 40;
+  google.protobuf.Timestamp start_time = 41;
+  google.protobuf.Timestamp expiration_time = 42;
+
+  // Double Properties
+  double bid = 50;
+  double bidhigh = 51;
+  double bidlow = 52;
+  double ask = 53;
+  double askhigh = 54;
+  double asklow = 55;
+  double last = 56;
+  double lasthigh = 57;
+  double lastlow = 58;
+  double volume_real = 59;
+  double volumehigh_real = 60;
+  double volumelow_real = 61;
+  double option_strike = 62;
+  double point = 63;
+  double trade_tick_value = 64;
+  double trade_tick_value_profit = 65;
+  double trade_tick_value_loss = 66;
+  double trade_tick_size = 67;
+  double trade_contract_size = 68;
+  double trade_accrued_interest = 69;
+  double trade_face_value = 70;
+  double trade_liquidity_rate = 71;
+  double volume_min = 72;
+  double volume_max = 73;
+  double volume_step = 74;
+  double volume_limit = 75;
+  double swap_long = 76;
+  double swap_short = 77;
+  double margin_initial = 78;
+  double margin_maintenance = 79;
+  double session_volume = 80;
+  double session_turnover = 81;
+  double session_interest = 82;
+  double session_buy_orders_volume = 83;
+  double session_sell_orders_volume = 84;
+  double session_open = 85;
+  double session_close = 86;
+  double session_aw = 87;
+  double session_price_settlement = 88;
+  double session_price_limit_min = 89;
+  double session_price_limit_max = 90;
+  double margin_hedged = 91;
+  double price_change = 92;
+  double price_volatility = 93;
+  double price_theoretical = 94;
+  double price_greeks_delta = 95;
+  double price_greeks_theta = 96;
+  double price_greeks_gamma = 97;
+  double price_greeks_vega = 98;
+  double price_greeks_rho = 99;
+  double price_greeks_omega = 100;
+  double price_sensitivity = 101;
+
+  // String Properties
+  string basis = 110;
+  string category = 111;
+  string currency_base = 112;
+  string currency_profit = 113;
+  string currency_margin = 114;
+  string bank = 115;
+  string description = 116;
+  string exchange = 117;
+  string formula = 118;
+  string isin = 119;
+  string name = 120;
+  string page = 121;
+  string path = 122;
+}
+
+// Request for Symbol Information
+message SymbolInfoRequest {
+  string symbol = 1;  // Financial instrument name
+}
+
+// Response for Symbol Information
+message SymbolInfoResponse {
+  SymbolInfo symbol_info = 1;
+  Error error = 2;
+}
+
+// Service definition for Symbol Information
+service SymbolInfoService {
+  // Get information about a specific financial instrument
+  rpc GetSymbolInfo(SymbolInfoRequest) returns (SymbolInfoResponse);
+}

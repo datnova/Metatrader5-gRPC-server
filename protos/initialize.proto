@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+
+service InitializeService {
+  
+  // Connect to the specified trading account
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+  
+  // Shut down connection to the MetaTrader 5 terminal
+  rpc Shutdown(ShutdownRequest) returns (ShutdownResponse) {}
+  
+  // Get the MetaTrader 5 terminal version
+  rpc GetVersion(VersionRequest) returns (VersionResponse) {}
+}
+
+// Request for login
+message LoginRequest {
+  // Account number
+  int64 login = 1;
+  
+  // Password
+  string password = 2;
+  
+  // Trade server
+  string server = 3;
+}
+
+// Response for login
+message LoginResponse {
+  // Success flag
+  bool success = 1;
+  
+  // Common error information
+  Error error = 2;
+}
+
+// Request for shutdown
+message ShutdownRequest {}
+
+// Response for shutdown
+message ShutdownResponse {
+  // Success flag
+  bool success = 1;
+  
+  // Common error information
+  Error error = 2;
+}
+
+// Request for version
+message VersionRequest {}
+
+// Response containing version information
+message VersionResponse {
+  // Version number
+  string version = 1;
+  
+  // Common error information
+  Error error = 2;
+}

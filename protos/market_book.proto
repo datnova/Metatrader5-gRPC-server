@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+
+// Market book entry structure
+message BookInfo {
+  int32 type = 1;     // Order type (buy/sell)
+  double price = 2;   // Price
+  double volume = 3;  // Volume
+}
+
+// Request for subscribing to market book
+message MarketBookAddRequest {
+  string symbol = 1;  // Symbol name
+}
+
+// Response for market book subscription
+message MarketBookAddResponse {
+  bool success = 1;   // Subscription success status
+  Error error = 2;    // Error information if any
+}
+
+// Request for getting market book data
+message MarketBookGetRequest {
+  string symbol = 1;  // Symbol name
+}
+
+// Response for getting market book data
+message MarketBookGetResponse {
+  repeated BookInfo book = 1;  // Market depth entries
+  Error error = 2;            // Error information if any
+}
+
+// Request for unsubscribing from market book
+message MarketBookReleaseRequest {
+  string symbol = 1;  // Symbol name
+}
+
+// Response for market book unsubscription
+message MarketBookReleaseResponse {
+  bool success = 1;   // Unsubscription success status
+  Error error = 2;    // Error information if any
+}
+
+// Service definition for Market Book operations
+service MarketBookService {
+  // Subscribe to market depth updates
+  rpc AddMarketBook(MarketBookAddRequest) returns (MarketBookAddResponse);
+  
+  // Get current market depth data
+  rpc GetMarketBook(MarketBookGetRequest) returns (MarketBookGetResponse);
+  
+  // Unsubscribe from market depth updates
+  rpc ReleaseMarketBook(MarketBookReleaseRequest) returns (MarketBookReleaseResponse);
+}
+
+// ORDER_TYPE enumeration for market book
+enum BOOK_TYPE {
+  BOOK_TYPE_UNSPECIFIED = 0;
+  BOOK_TYPE_SELL = 1;      // Sell order (offer)
+  BOOK_TYPE_BUY = 2;       // Buy order (bid)
+  BOOK_TYPE_SELL_MARKET = 3; // Sell order by Market
+  BOOK_TYPE_BUY_MARKET = 4;  // Buy order by Market
+} 

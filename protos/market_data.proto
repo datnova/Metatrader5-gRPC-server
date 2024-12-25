@@ -1,0 +1,163 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+// Rate data structure
+message Rate {
+  google.protobuf.Timestamp time = 1;
+  double open = 2;
+  double high = 3;
+  double low = 4;
+  double close = 5;
+  int64 tick_volume = 6;
+  int32 spread = 7;
+  int64 real_volume = 8;
+}
+
+// Tick data structure
+message Tick {
+  google.protobuf.Timestamp time = 1;
+  double bid = 2;
+  double ask = 3;
+  double last = 4;
+  uint64 volume = 5;
+  int64 time_msc = 6;
+  uint32 flags = 7;
+  double volume_real = 8;
+}
+
+// Request for copy_rates_from
+message CopyRatesFromRequest {
+  string symbol = 1;           // Symbol name
+  int32 timeframe = 2;         // Timeframe from TIMEFRAME enum
+  google.protobuf.Timestamp date_from = 3;  // Initial bar date
+  int32 count = 4;            // Number of bars to get
+}
+
+// Response for copy_rates_from
+message CopyRatesFromResponse {
+  repeated Rate rates = 1;
+  Error error = 2;
+}
+
+// Request for copy_rates_from_pos
+message CopyRatesFromPosRequest {
+  string symbol = 1;           // Symbol name
+  int32 timeframe = 2;         // Timeframe from TIMEFRAME enum
+  int32 start_pos = 3;         // Initial bar index
+  int32 count = 4;            // Number of bars to get
+}
+
+// Response for copy_rates_from_pos
+message CopyRatesFromPosResponse {
+  repeated Rate rates = 1;
+  Error error = 2;
+}
+
+// Request for copy_rates_range
+message CopyRatesRangeRequest {
+  string symbol = 1;           // Symbol name
+  int32 timeframe = 2;         // Timeframe from TIMEFRAME enum
+  google.protobuf.Timestamp date_from = 3;  // Start date
+  google.protobuf.Timestamp date_to = 4;    // End date
+}
+
+// Response for copy_rates_range
+message CopyRatesRangeResponse {
+  repeated Rate rates = 1;
+  Error error = 2;
+}
+
+// Request for copy_ticks_from
+message CopyTicksFromRequest {
+  string symbol = 1;           // Symbol name
+  google.protobuf.Timestamp date_from = 2;  // Start date
+  int32 count = 3;            // Number of ticks to get
+  int32 flags = 4;            // Flags defining type of requested ticks
+}
+
+// Response for copy_ticks_from
+message CopyTicksFromResponse {
+  repeated Tick ticks = 1;
+  Error error = 2;
+}
+
+// Request for copy_ticks_range
+message CopyTicksRangeRequest {
+  string symbol = 1;           // Symbol name
+  google.protobuf.Timestamp date_from = 2;  // Start date
+  google.protobuf.Timestamp date_to = 3;    // End date
+  int32 flags = 4;            // Flags defining type of requested ticks
+}
+
+// Response for copy_ticks_range
+message CopyTicksRangeResponse {
+  repeated Tick ticks = 1;
+  Error error = 2;
+}
+
+// Service definition for Market Data
+service MarketDataService {
+  // Get bars from specified date
+  rpc CopyRatesFrom(CopyRatesFromRequest) returns (CopyRatesFromResponse);
+  
+  // Get bars from specified position
+  rpc CopyRatesFromPos(CopyRatesFromPosRequest) returns (CopyRatesFromPosResponse);
+  
+  // Get bars for specified date range
+  rpc CopyRatesRange(CopyRatesRangeRequest) returns (CopyRatesRangeResponse);
+  
+  // Get ticks from specified date
+  rpc CopyTicksFrom(CopyTicksFromRequest) returns (CopyTicksFromResponse);
+  
+  // Get ticks for specified date range
+  rpc CopyTicksRange(CopyTicksRangeRequest) returns (CopyTicksRangeResponse);
+}
+
+// TIMEFRAME enumeration
+enum TIMEFRAME {
+  TIMEFRAME_UNSPECIFIED = 0;
+  TIMEFRAME_M1 = 1;
+  TIMEFRAME_M2 = 2;
+  TIMEFRAME_M3 = 3;
+  TIMEFRAME_M4 = 4;
+  TIMEFRAME_M5 = 5;
+  TIMEFRAME_M6 = 6;
+  TIMEFRAME_M10 = 10;
+  TIMEFRAME_M12 = 12;
+  TIMEFRAME_M15 = 15;
+  TIMEFRAME_M20 = 20;
+  TIMEFRAME_M30 = 30;
+  TIMEFRAME_H1 = 16385;
+  TIMEFRAME_H2 = 16386;
+  TIMEFRAME_H3 = 16387;
+  TIMEFRAME_H4 = 16388;
+  TIMEFRAME_H6 = 16390;
+  TIMEFRAME_H8 = 16392;
+  TIMEFRAME_H12 = 16396;
+  TIMEFRAME_D1 = 16408;
+  TIMEFRAME_W1 = 32769;
+  TIMEFRAME_MN1 = 49153;
+}
+
+// COPY_TICKS enumeration
+enum COPY_TICKS {
+  COPY_TICKS_UNSPECIFIED = 0;
+  COPY_TICKS_ALL = 1;         // all ticks
+  COPY_TICKS_INFO = 2;        // ticks with Bid and/or Ask changes
+  COPY_TICKS_TRADE = 4;       // ticks with changes in Last and Volume
+}
+
+// TICK_FLAG enumeration
+enum TICK_FLAG {
+  TICK_FLAG_UNSPECIFIED = 0;
+  TICK_FLAG_BID = 2;          // Bid price changed
+  TICK_FLAG_ASK = 4;          // Ask price changed
+  TICK_FLAG_LAST = 8;         // Last price changed
+  TICK_FLAG_VOLUME = 16;      // Volume changed
+  TICK_FLAG_BUY = 32;         // Buy price
+  TICK_FLAG_SELL = 64;        // Sell price
+} 

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+
+// Service for working with symbols
+service SymbolsService {
+  // Get the number of all financial instruments
+  rpc GetSymbolsTotal(SymbolsTotalRequest) returns (SymbolsTotalResponse) {}
+  
+  // Get all financial instruments
+  rpc GetSymbols(SymbolsGetRequest) returns (SymbolsGetResponse) {}
+  
+  // Select a symbol in the Market Watch window
+  rpc SelectSymbol(SymbolSelectRequest) returns (SymbolSelectResponse) {}
+}
+
+// Request for getting total number of symbols
+message SymbolsTotalRequest {}
+
+// Response containing total number of symbols
+message SymbolsTotalResponse {
+  // Total number of symbols
+  int32 total = 1;
+  
+  // Common error information
+  Error error = 2;
+}
+
+// Request for getting symbols
+message SymbolsGetRequest {
+  // Optional group filter
+  string group = 1;
+}
+
+// Response containing symbols information
+message SymbolsGetResponse {
+  // List of symbol names
+  repeated string symbols = 1;
+  
+  // Common error information
+  Error error = 2;
+}
+
+// Request for selecting a symbol
+message SymbolSelectRequest {
+  // Symbol name
+  string symbol = 1;
+  
+  // Selection flag
+  bool enable = 2;
+}
+
+// Response for symbol selection
+message SymbolSelectResponse {
+  // Success flag
+  bool success = 1;
+  
+  // Common error information
+  Error error = 2;
+} 

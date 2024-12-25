@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+
+// Service for getting terminal information
+service TerminalInfoService {
+  // Get MetaTrader 5 terminal information
+  rpc GetTerminalInfo(TerminalInfoRequest) returns (TerminalInfoResponse) {}
+}
+
+// Request for getting terminal information
+message TerminalInfoRequest {}
+
+// Response containing terminal information
+message TerminalInfoResponse {
+  // Community account flag
+  bool community_account = 1;
+  
+  // Connection to MQL5.community status
+  bool community_connection = 2;
+  
+  // Connection to a trade server status
+  bool connected = 3;
+  
+  // Permission to use DLL
+  bool dlls_allowed = 4;
+  
+  // Permission to trade
+  bool trade_allowed = 5;
+  
+  // Permission to use trading API
+  bool tradeapi_disabled = 6;
+  
+  // Permission to send emails using SMTP-server and login specified in the terminal settings
+  bool email_enabled = 7;
+  
+  // Permission to send reports using FTP-server and login specified in the terminal settings
+  bool ftp_enabled = 8;
+  
+  // Permission to send notifications to smartphone
+  bool notifications_enabled = 9;
+  
+  // Flag indicating presence of MetaQuotes ID data to send Push notifications
+  bool mqid = 10;
+  
+  // Client terminal build number
+  int32 build = 11;
+  
+  // Maximum bars count in charts
+  int32 maxbars = 12;
+  
+  // Code page of the language installed in the client terminal
+  int32 codepage = 13;
+  
+  // Last known value of ping to trade server in microseconds
+  int32 ping_last = 14;
+  
+  // Community balance
+  float community_balance = 15;
+  
+  // Connection data retransmission percentage
+  float retransmission = 16;
+  
+  // Company name
+  string company = 17;
+  
+  // Terminal name
+  string name = 18;
+  
+  // Language of terminal
+  string language = 19;
+  
+  // Folder from which the terminal is started
+  string path = 20;
+  
+  // Folder in which terminal data are stored
+  string data_path = 21;
+  
+  // Common path for all terminals installed on a computer
+  string commondata_path = 22;
+  
+  // Common error information
+  Error error = 23;
+}

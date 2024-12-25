@@ -2,64 +2,56 @@ syntax = "proto3";
 
 package metatrader.v1;
 
-import "google/protobuf/timestamp.proto";
 import "common.proto";
+import "google/protobuf/timestamp.proto";
 
-// Service definition for position operations
-service PositionService {
-  // Get positions based on different filter criteria
-  rpc GetPositions(GetPositionsRequest) returns (GetPositionsResponse) {}
+// Request for getting positions
+message PositionsGetRequest {
+  // Optional filtering parameters
+  optional string symbol = 1;     // Specific symbol name
+  optional string group = 2;      // Group filter for symbols
+  optional int64 ticket = 3;      // Specific position ticket
 }
 
-// Request message for getting positions
-message GetPositionsRequest {
-  oneof filter {
-    string symbol = 1;  // Filter by specific symbol
-    string group = 2;   // Filter by group pattern (e.g., "*USD*")
-    int64 ticket = 3;   // Filter by specific ticket number
-  }
-}
-
-// Response message containing positions
-message GetPositionsResponse {
-  repeated Position positions = 1;
-  optional Error error = 2;
-}
-
-// Position details
+// Single Position details using primitive types
 message Position {
   int64 ticket = 1;
-  google.protobuf.Timestamp time = 2;
-  TradeType type = 3;
+  string symbol = 2;
+  int32 type = 3;
   int32 magic = 4;
   int64 identifier = 5;
-  TradeReason reason = 6;
+  int32 reason = 6;
   double volume = 7;
   double price_open = 8;
-  double sl = 9;         // Stop Loss
-  double tp = 10;        // Take Profit
+  double stop_loss = 9;
+  double take_profit = 10;
   double price_current = 11;
   double swap = 12;
   double profit = 13;
-  string symbol = 14;
-  string comment = 15;
+  string comment = 14;
+  google.protobuf.Timestamp time = 15;
 }
 
-// Trade type enumeration
-enum TradeType {
-  TRADE_TYPE_UNSPECIFIED = 0;
-  TRADE_TYPE_SELL = 1;
-  TRADE_TYPE_BUY = 2;
+// Response for getting positions
+message PositionsGetResponse {
+  repeated Position positions = 1;
+  Error error = 2;
 }
 
-// Trade reason enumeration
-enum TradeReason {
-  TRADE_REASON_UNSPECIFIED = 0;
-  TRADE_REASON_CLIENT = 1;
-  TRADE_REASON_MOBILE = 2;
-  TRADE_REASON_WEB = 3;
-  TRADE_REASON_EXPERT = 4;
-  TRADE_REASON_SL = 5;     // Stop Loss
-  TRADE_REASON_TP = 6;     // Take Profit
-  TRADE_REASON_SO = 7;     // Stop Out
+// Request for getting total number of positions
+message PositionsTotalRequest {}
+
+// Response for total number of positions
+message PositionsTotalResponse {
+  int32 total = 1;
+  Error error = 2;
+}
+
+// Service definition for Positions
+service PositionsService {
+  // Get open positions with optional filtering
+  rpc GetPositions(PositionsGetRequest) returns (PositionsGetResponse);
+
+  // Get total number of open positions
+  rpc GetPositionsTotal(PositionsTotalRequest) returns (PositionsTotalResponse);
 }

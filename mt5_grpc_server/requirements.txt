@@ -1,0 +1,5 @@
+-e ../mt5_grpc_proto
+grpcio>=1.68.1
+grpcio-tools>=1.68.1
+protobuf>=5.29.2
+MetaTrader5>=5.0.33

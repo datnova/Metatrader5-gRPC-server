@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+// Tick Information Message
+message SymbolInfoTick {
+  // Timestamp in seconds
+  google.protobuf.Timestamp time = 1;
+
+  // Bid price
+  double bid = 2;
+
+  // Ask price
+  double ask = 3;
+
+  // Last trade price
+  double last = 4;
+
+  // Volume (integer)
+  int32 volume = 5;
+
+  // Timestamp in milliseconds
+  int64 time_msc = 6;
+
+  // Flags
+  int32 flags = 7;
+
+  // Volume as a real number
+  double volume_real = 8;
+}
+
+// Request for Symbol Tick Information
+message SymbolInfoTickRequest {
+  string symbol = 1;  // Financial instrument name
+}
+
+// Response for Symbol Tick Information
+message SymbolInfoTickResponse {
+  SymbolInfoTick tick = 1;
+  Error error = 2;
+}
+
+// Service definition for Symbol Tick Information
+service SymbolInfoTickService {
+  // Get the last tick for a specific financial instrument
+  rpc GetSymbolInfoTick(SymbolInfoTickRequest) returns (SymbolInfoTickResponse);
+}

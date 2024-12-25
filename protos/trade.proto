@@ -1,125 +1,113 @@
 syntax = "proto3";
 
-package trading_system;
+package metatrader.v1;
 
+import "common.proto";
 import "google/protobuf/timestamp.proto";
 
-// Trade Request Actions Enumeration
-enum TradeRequestAction {
-  TRADE_ACTION_DEAL = 0;         // Open/Close position
-  TRADE_ACTION_PENDING = 1;      // Place pending order
-  TRADE_ACTION_MODIFY = 2;       // Modify existing order
-  TRADE_ACTION_REMOVE = 3;       // Remove pending order
-  TRADE_ACTION_SLTP = 4;         // Modify Stop Loss/Take Profit
-}
-
-// Trade Request Structure
+// Trade Request Message
 message TradeRequest {
-  // Core Request Properties
-  TradeRequestAction action = 1;             // Trade operation type
-  uint64 magic = 2;                          // Expert Advisor ID (magic number)
-  uint64 order = 3;                          // Order ticket (for modification)
-  string symbol = 4;                         // Trade symbol
-  double volume = 5;                         // Requested volume in lots
-  double price = 6;                          // Execution/Order price
-  double stoplimit = 7;                      // StopLimit level for pending orders
-  double sl = 8;                             // Stop Loss price
-  double tp = 9;                             // Take Profit price
-  uint64 deviation = 10;                     // Maximum price deviation in points
+  // Trading operation type
+  int32 action = 1;
 
-  // Order Specifics
-  OrderType type = 11;                       // Order type (buy/sell/limit/stop)
-  OrderTypeFilling type_filling = 12;        // Order execution type
-  OrderTypeTime type_time = 13;              // Order expiration type
-  google.protobuf.Timestamp expiration = 14; // Order expiration time
-  string comment = 15;                       // Order comment
+  // EA ID for analytical handling
+  int32 magic = 2;
 
-  // Position Management
-  uint64 position = 16;                      // Position ticket for modification/closure
-  uint64 position_by = 17;                   // Ticket of opposite position for closing
+  // Order ticket (for modifying orders)
+  optional int64 order = 3;
 
-  // Enumerations (reusing from previous contract)
-  enum OrderType {
-    ORDER_TYPE_BUY = 0;
-    ORDER_TYPE_SELL = 1;
-    ORDER_TYPE_BUY_LIMIT = 2;
-    ORDER_TYPE_SELL_LIMIT = 3;
-    ORDER_TYPE_BUY_STOP = 4;
-    ORDER_TYPE_SELL_STOP = 5;
-    ORDER_TYPE_BUY_STOP_LIMIT = 6;
-    ORDER_TYPE_SELL_STOP_LIMIT = 7;
-    ORDER_TYPE_CLOSE_BY = 8;
-  }
+  // Trading instrument symbol
+  optional string symbol = 4;
 
-  enum OrderTypeFilling {
-    ORDER_FILLING_FOK = 0;     // Fill or Kill
-    ORDER_FILLING_IOC = 1;     // Immediate or Cancel
-    ORDER_FILLING_BOC = 2;     // Book or Cancel
-    ORDER_FILLING_RETURN = 3;  // Return remaining volume
-  }
+  // Requested volume in lots
+  double volume = 5;
 
-  enum OrderTypeTime {
-    ORDER_TIME_GTC = 0;                // Good till cancel
-    ORDER_TIME_DAY = 1;                // Good till current trade day
-    ORDER_TIME_SPECIFIED = 2;          // Good till expired
-    ORDER_TIME_SPECIFIED_DAY = 3;      // Good till specified day
-  }
+  // Execution price
+  optional double price = 6;
+
+  // Stop limit price
+  optional double stoplimit = 7;
+
+  // Stop Loss price
+  optional double sl = 8;
+
+  // Take Profit price
+  optional double tp = 9;
+
+  // Maximum acceptable price deviation in points
+  int32 deviation = 10;
+
+  // Order type
+  int32 type = 11;
+
+  // Order filling type
+  int32 type_filling = 12;
+
+  // Order time type
+  int32 type_time = 13;
+
+  // Expiration time for pending orders
+  optional google.protobuf.Timestamp expiration = 14;
+
+  // Order comment
+  optional string comment = 15;
+
+  // Position ticket for closing/modifying
+  optional int64 position = 16;
+
+  // Opposite position ticket
+  optional int64 position_by = 17;
 }
 
-// Trade Request Result Structure
-message TradeRequestResult {
-  uint32 retcode = 1;            // Operation return code
-  uint64 deal = 2;               // Deal ticket
-  uint64 order = 3;              // Order ticket
-  double volume = 4;             // Executed volume
-  double price = 5;              // Execution price
-  double bid = 6;                // Current Bid price
-  double ask = 7;                // Current Ask price
-  string comment = 8;            // Broker comment to operation
-  uint32 request_id = 9;         // Request ID set by the terminal during the dispatch
-  int32 retcode_external = 10;   // Return code of an external trading system
+// Trade Result Message
+message TradeResult {
+  // Return code of the operation
+  int32 retcode = 1;
 
-  // Detailed status
-  enum ResultStatus {
-    SUCCESS = 0;
-    PARTIAL_FILL = 1;
-    ERROR = 2;
-    REJECTED = 3;
-    CANCELLED = 4;
-  }
+  // Deal ticket
+  int64 deal = 2;
 
-  ResultStatus status = 11;
-  string error_description = 12;
+  // Order ticket
+  int64 order = 3;
+
+  // Executed volume
+  double volume = 4;
+
+  // Execution price
+  double price = 5;
+
+  // Bid price
+  double bid = 6;
+
+  // Ask price
+  double ask = 7;
+
+  // Comment on the operation
+  string comment = 8;
+
+  // Request ID
+  int64 request_id = 9;
+
+  // External return code
+  int32 retcode_external = 10;
+
+  // Original trade request
+  TradeRequest request = 11;
 }
 
-// Trade Management Service
-service TradeManagementService {
-  // Open a new position or place a pending order
-  rpc SendTradeRequest(TradeRequest) returns (TradeRequestResult) {}
+// Request for sending an order
+message OrderSendRequest {
+  TradeRequest trade_request = 1;
 }
 
-// Advanced Filtering for Trade Requests
-message TradeRequestFilter {
-  repeated TradeRequestAction actions = 1;
-  string symbol = 2;
-  google.protobuf.Timestamp from_date = 3;
-  google.protobuf.Timestamp to_date = 4;
-  uint64 magic_number = 5;
-  bool include_closed = 6;
-  double min_volume = 7;
-  double max_volume = 8;
+// Response for order send operation
+message OrderSendResponse {
+  TradeResult trade_result = 1;
+  Error error = 2;
 }
 
-// Trade History Request
-message TradeHistoryRequest {
-  TradeRequestFilter filter = 1;
-  uint32 page_size = 2;
-  uint32 page_token = 3;
-}
-
-// Trade History Response
-message TradeHistoryResponse {
-  repeated TradeRequest trade_requests = 1;
-  uint32 total_count = 2;
-  uint32 next_page_token = 3;
+// Service definition for Order Sending
+service OrderSendService {
+  // Send a trading order
+  rpc SendOrder(OrderSendRequest) returns (OrderSendResponse);
 }

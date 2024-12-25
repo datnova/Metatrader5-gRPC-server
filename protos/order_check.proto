@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+import "trade.proto";
+
+// Response for order check operation
+message OrderCheckResult {
+  int32 retcode = 1;           // Operation return code
+  double balance = 2;          // Balance value after execution
+  double equity = 3;           // Equity value after execution
+  double profit = 4;           // Floating profit value
+  double margin = 5;           // Margin requirements
+  double margin_free = 6;      // Free margin after execution
+  double margin_level = 7;     // Margin level after execution
+  string comment = 8;          // Comment on check result
+  TradeRequest request = 9;    // Original trade request
+}
+
+// Request for checking an order
+message OrderCheckRequest {
+  TradeRequest trade_request = 1;
+}
+
+// Response for order check operation
+message OrderCheckResponse {
+  OrderCheckResult check_result = 1;
+  Error error = 2;
+}
+
+// Service definition for Order Checking
+service OrderCheckService {
+  // Check if an order can be executed
+  rpc CheckOrder(OrderCheckRequest) returns (OrderCheckResponse);
+} 

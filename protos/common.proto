@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+// Error details
+message Error {
+  int32 code = 1;
+  string message = 2;
+}
+
+// Request for getting the last error
+message GetLastErrorRequest {}
+
+// Response for getting the last error
+message GetLastErrorResponse {
+  Error error = 1;
+}
+
+// Service definition
+service MetaTraderService {
+  rpc Connect(ConnectRequest) returns (Error);
+  rpc GetLastError(Empty) returns (GetLastErrorResponse);
+} 
+
+message Empty {}
+
+message ConnectRequest {
+  optional string path = 1;  // Optional path to MetaTrader executable, use default if not specified
+}
+
+message TimeFilter {
+  int64 date_from = 1;  // Unix timestamp in seconds since 1970.01.01
+  int64 date_to = 2;    // Unix timestamp in seconds since 1970.01.01
+}

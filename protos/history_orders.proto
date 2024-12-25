@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+// Service definition for historical orders
+service HistoryOrdersService {
+  // Get orders from trading history within specified parameters
+  rpc GetHistoryOrders(HistoryOrdersRequest) returns (HistoryOrdersResponse);
+  
+  // Get total number of orders in history for a specified period
+  rpc GetHistoryOrdersTotal(HistoryOrdersTotalRequest) returns (HistoryOrdersTotalResponse);
+}
+
+// Request message for retrieving historical orders
+message HistoryOrdersRequest {
+  oneof filter {
+    TimeFilter time_filter = 1;
+    uint64 ticket = 2;      // Filter by order ticket
+    uint64 position = 3;    // Filter by position ticket
+  }
+  optional string group = 4;         // Optional symbol group filter
+}
+
+// Request for getting total number of historical orders
+message HistoryOrdersTotalRequest {
+  int64 date_from = 1;  // Unix timestamp in seconds since 1970.01.01
+  int64 date_to = 2;    // Unix timestamp in seconds since 1970.01.01
+}
+
+// Response containing total number of historical orders
+message HistoryOrdersTotalResponse {
+  int32 total = 1;
+  optional Error error = 2;
+}
+
+// Response containing a list of historical orders
+message HistoryOrdersResponse {
+  repeated HistoryOrder orders = 1;
+  optional Error error = 2;
+}
+
+// Represents a single historical order
+message HistoryOrder {
+  uint64 ticket = 1;                          // Order ticket
+  google.protobuf.Timestamp time_setup = 2;   // Order setup time
+  int64 time_setup_msc = 3;                  // Setup time in milliseconds
+  google.protobuf.Timestamp time_done = 4;    // Order execution/cancellation time
+  int64 time_done_msc = 5;                   // Execution time in milliseconds
+  google.protobuf.Timestamp time_expiration = 6; // Order expiration time
+  int32 type = 7;                            // Order type
+  int32 type_time = 8;                       // Order time in force
+  int32 type_filling = 9;                    // Order filling type
+  int32 state = 10;                          // Order state
+  uint32 magic = 11;                         // Expert Advisor ID
+  uint64 position_id = 12;                   // Position identifier
+  double volume_initial = 13;                // Initial order volume
+  double volume_current = 14;                // Unfilled volume
+  double price_open = 15;                    // Order price
+  double stop_loss = 16;                     // Stop Loss level
+  double take_profit = 17;                   // Take Profit level
+  double price_current = 18;                 // Current price
+  double price_stoplimit = 19;               // Stop Limit order activation price
+  string symbol = 20;                        // Trading symbol
+  string comment = 21;                       // Order comment
+  string external_id = 22;                   // Order identifier in an external system
+} 

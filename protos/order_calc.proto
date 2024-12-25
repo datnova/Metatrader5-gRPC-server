@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package metatrader.v1;
+
+import "common.proto";
+
+// Request for calculating margin
+message OrderCalcMarginRequest {
+  int32 action = 1;      // Order type (ORDER_TYPE_BUY or ORDER_TYPE_SELL)
+  string symbol = 2;     // Symbol name
+  double volume = 3;     // Volume
+  double price = 4;      // Open price
+}
+
+// Response for margin calculation
+message OrderCalcMarginResponse {
+  double margin = 1;     // Calculated margin value
+  Error error = 2;       // Error information if any
+}
+
+// Request for calculating profit
+message OrderCalcProfitRequest {
+  int32 action = 1;      // Order type (ORDER_TYPE_BUY or ORDER_TYPE_SELL)
+  string symbol = 2;     // Symbol name
+  double volume = 3;     // Volume
+  double price_open = 4; // Open price
+  double price_close = 5;// Close price
+}
+
+// Response for profit calculation
+message OrderCalcProfitResponse {
+  double profit = 1;     // Calculated profit value
+  Error error = 2;       // Error information if any
+}
+
+// Service definition for Order Calculations
+service OrderCalcService {
+  // Calculate margin required for a trading operation
+  rpc CalcMargin(OrderCalcMarginRequest) returns (OrderCalcMarginResponse);
+  
+  // Calculate potential profit for a trading operation
+  rpc CalcProfit(OrderCalcProfitRequest) returns (OrderCalcProfitResponse);
+} 
