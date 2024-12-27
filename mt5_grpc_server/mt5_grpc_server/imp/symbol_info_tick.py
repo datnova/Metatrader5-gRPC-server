@@ -12,13 +12,6 @@ class SymbolInfoTickServiceImpl(SymbolInfoTickServiceServicer):
         """
         # Initialize the response
         response = SymbolInfoTickResponse()
-        
-        # Check if MT5 is initialized
-        if not mt5.initialize():
-            error_code, error_message = mt5.last_error()
-            response.error.code = error_code
-            response.error.message = error_message
-            return response
 
         try:
             # Get symbol info tick from MT5
@@ -56,6 +49,3 @@ class SymbolInfoTickServiceImpl(SymbolInfoTickServiceServicer):
             response.error.code = -1  # Generic error code for exceptions
             response.error.message = str(e)
             return response
-
-        finally:
-            mt5.shutdown() 

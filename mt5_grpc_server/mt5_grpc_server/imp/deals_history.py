@@ -11,20 +11,7 @@ from mt5_grpc_proto.common_pb2 import Error
 
 class TradeHistoryServiceImpl(TradeHistoryServiceServicer):
     def __init__(self):
-        self._initialized = False
-
-    def _ensure_initialized(self) -> Tuple[bool, Optional[Error]]:
-        """Initialize MT5 connection if not already initialized."""
-        if not self._initialized:
-            if not mt5.initialize():
-                error_code, error_message = mt5.last_error()
-                error = Error(
-                    code=error_code,
-                    message=f"MetaTrader5 initialization failed: {error_message}"
-                )
-                return False, error
-            self._initialized = True
-        return True, None
+        pass
 
     def _convert_deal_to_proto(self, mt5_deal) -> Deal:
         """Convert MT5 deal object to protobuf Deal message.
@@ -74,12 +61,6 @@ class TradeHistoryServiceImpl(TradeHistoryServiceServicer):
             DealsResponse containing matched deals or error
         """
         response = DealsResponse()
-
-        # Ensure MT5 is initialized
-        initialized, error = self._ensure_initialized()
-        if not initialized:
-            response.error.CopyFrom(error)
-            return response
 
         try:
             # Handle different filter types according to MT5 reference

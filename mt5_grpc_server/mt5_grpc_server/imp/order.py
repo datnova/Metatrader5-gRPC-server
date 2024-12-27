@@ -17,24 +17,7 @@ class OrdersServiceImpl(OrdersServiceServicer):
     """Implementation of Orders service for MetaTrader 5."""
 
     def __init__(self):
-        self._initialized = False
-
-    def _ensure_initialized(self) -> Tuple[bool, Optional[Error]]:
-        """Initialize MT5 connection if not already initialized.
-
-        Returns:
-            Tuple[bool, Optional[Error]]: Success status and error if any
-        """
-        if not self._initialized:
-            if not mt5.initialize():
-                error_code, error_message = mt5.last_error()
-                error = Error(
-                    code=error_code,
-                    message=f"MetaTrader5 initialization failed: {error_message}"
-                )
-                return False, error
-            self._initialized = True
-        return True, None
+        pass
 
     def _to_timestamp(self, time_value: Union[int, datetime, None]) -> Optional[Timestamp]:
         """Convert various time formats to Protobuf Timestamp.
@@ -101,27 +84,8 @@ class OrdersServiceImpl(OrdersServiceServicer):
         return order
 
     def GetOrders(self, request: OrdersGetRequest, context) -> OrdersGetResponse:
-        """Get orders from MT5 based on specified filters.
-
-        According to MT5 reference, we can filter orders by:
-        1. Symbol name
-        2. Symbol group
-        3. Order ticket
-
-        Args:
-            request: OrdersGetRequest containing filter criteria
-            context: gRPC context
-
-        Returns:
-            OrdersGetResponse containing matched orders or error
-        """
+        """Get orders from MT5 based on specified filters."""
         response = OrdersGetResponse()
-
-        # Ensure MT5 is initialized
-        initialized, error = self._ensure_initialized()
-        if not initialized:
-            response.error.CopyFrom(error)
-            return response
 
         try:
             # Apply filters according to MT5 reference
@@ -154,22 +118,8 @@ class OrdersServiceImpl(OrdersServiceServicer):
             return response
 
     def GetOrdersTotal(self, request: OrdersTotalRequest, context) -> OrdersTotalResponse:
-        """Get total number of active orders.
-
-        Args:
-            request: OrdersTotalRequest
-            context: gRPC context
-
-        Returns:
-            OrdersTotalResponse containing total count or error
-        """
+        """Get total number of active orders."""
         response = OrdersTotalResponse()
-
-        # Ensure MT5 is initialized
-        initialized, error = self._ensure_initialized()
-        if not initialized:
-            response.error.CopyFrom(error)
-            return response
 
         try:
             total = mt5.orders_total()
@@ -186,8 +136,3 @@ class OrdersServiceImpl(OrdersServiceServicer):
             response.error.code = -1  # RES_E_FAIL
             response.error.message = f"Internal error getting orders total: {str(e)}"
             return response
-
-    def __del__(self):
-        """Clean up MT5 connection on service shutdown."""
-        if self._initialized:
-            mt5.shutdown()

@@ -27,35 +27,24 @@ class MetaTraderServiceImpl(MetaTraderServiceServicer):
 
         except Exception as e:
             response.error.code = -1  # Generic error code for exceptions
-            response.error.message = str(e)
+            response.error.message = f"Internal error getting last error: {str(e)}"
             return response
 
     def Connect(self, request, context):
         """Implementation of Connect RPC method"""
         response = common_pb2.Empty()
-        try:
             # If path is provided, set the MetaTrader5 path
-            if request.path:
-                # Validate the directory exists
-                if not os.path.isdir(request.path):
-                    error_code, error_message = mt5.last_error()
-                    context.abort(grpc.StatusCode.INVALID_ARGUMENT, f'Invalid directory path: {request.path}')
-                    return None
-                
-                # Set the path for MetaTrader5 initialization
-                if not mt5.initialize(path=request.path):
-                    error_code, error_message = mt5.last_error()
-                    context.abort(grpc.StatusCode.INTERNAL, error_message)
-                    return None
-            else:
-                # Initialize with default path
-                if not mt5.initialize():
-                    error_code, error_message = mt5.last_error()
-                    context.abort(grpc.StatusCode.INTERNAL, error_message)
-                    return None
+        if request.path:
+            # Set the path for MetaTrader5 initialization
+            if not mt5.initialize(path=request.path):
+                error_code, error_message = mt5.last_error()
+                context.abort(grpc.StatusCode.INTERNAL, f"Failed to initialize MetaTrader5 ({request.path}): {error_message}")
+                return None
+        else:
+            # Initialize with default path
+            if not mt5.initialize():
+                error_code, error_message = mt5.last_error()
+                context.abort(grpc.StatusCode.INTERNAL, f"Failed to initialize default MetaTrader5: {error_message}")
+                return None
 
-            return response
-
-        except Exception as e:
-            context.abort(grpc.StatusCode.INTERNAL, str(e))
-            return None
+        return response

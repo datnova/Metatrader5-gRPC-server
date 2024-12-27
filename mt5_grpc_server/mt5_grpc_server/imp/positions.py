@@ -16,26 +16,6 @@ from mt5_grpc_proto.position_pb2_grpc import PositionsServiceServicer
 class PositionsServiceImpl(PositionsServiceServicer):
     """Implementation of Positions service for MetaTrader 5."""
 
-    def __init__(self):
-        self._initialized = False
-
-    def _ensure_initialized(self) -> Tuple[bool, Optional[Error]]:
-        """Initialize MT5 connection if not already initialized.
-
-        Returns:
-            Tuple[bool, Optional[Error]]: Success status and error if any
-        """
-        if not self._initialized:
-            if not mt5.initialize():
-                error_code, error_message = mt5.last_error()
-                error = Error(
-                    code=error_code,
-                    message=f"MetaTrader5 initialization failed: {error_message}"
-                )
-                return False, error
-            self._initialized = True
-        return True, None
-
     def _to_timestamp(self, time_value: Union[int, datetime, None]) -> Optional[Timestamp]:
         """Convert various time formats to Protobuf Timestamp.
 
@@ -107,12 +87,6 @@ class PositionsServiceImpl(PositionsServiceServicer):
         """
         response = PositionsGetResponse()
 
-        # Ensure MT5 is initialized
-        initialized, error = self._ensure_initialized()
-        if not initialized:
-            response.error.CopyFrom(error)
-            return response
-
         try:
             # Apply filters according to MT5 reference
             if request.HasField('ticket'):
@@ -155,12 +129,6 @@ class PositionsServiceImpl(PositionsServiceServicer):
         """
         response = PositionsTotalResponse()
 
-        # Ensure MT5 is initialized
-        initialized, error = self._ensure_initialized()
-        if not initialized:
-            response.error.CopyFrom(error)
-            return response
-
         try:
             total = mt5.positions_total()
             if total is None:
@@ -176,8 +144,3 @@ class PositionsServiceImpl(PositionsServiceServicer):
             response.error.code = -1  # RES_E_FAIL
             response.error.message = f"Internal error getting positions total: {str(e)}"
             return response
-
-    def __del__(self):
-        """Clean up MT5 connection on service shutdown."""
-        if self._initialized:
-            mt5.shutdown()

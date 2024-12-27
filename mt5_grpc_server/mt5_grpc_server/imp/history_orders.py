@@ -14,20 +14,7 @@ from mt5_grpc_proto.common_pb2 import Error
 
 class HistoryOrdersServiceImpl(HistoryOrdersServiceServicer):
     def __init__(self):
-        self._initialized = False
-
-    def _ensure_initialized(self) -> Tuple[bool, Optional[Error]]:
-        """Initialize MT5 connection if not already initialized."""
-        if not self._initialized:
-            if not mt5.initialize():
-                error_code, error_message = mt5.last_error()
-                error = Error(
-                    code=error_code,
-                    message=f"MetaTrader5 initialization failed: {error_message}"
-                )
-                return False, error
-            self._initialized = True
-        return True, None
+        pass
 
     def _convert_timestamp(self, unix_timestamp: int) -> Timestamp:
         """Convert Unix timestamp to protobuf Timestamp."""
@@ -70,22 +57,8 @@ class HistoryOrdersServiceImpl(HistoryOrdersServiceServicer):
         )
 
     def GetHistoryOrders(self, request: HistoryOrdersRequest, context) -> HistoryOrdersResponse:
-        """Get orders from trading history based on specified filters.
-
-        Args:
-            request: HistoryOrdersRequest containing filter criteria
-            context: gRPC context
-
-        Returns:
-            HistoryOrdersResponse containing matched orders or error
-        """
+        """Get orders from trading history based on specified filters."""
         response = HistoryOrdersResponse()
-
-        # Ensure MT5 is initialized
-        initialized, error = self._ensure_initialized()
-        if not initialized:
-            response.error.CopyFrom(error)
-            return response
 
         try:
             # Handle different filter types
@@ -123,22 +96,8 @@ class HistoryOrdersServiceImpl(HistoryOrdersServiceServicer):
             return response
 
     def GetHistoryOrdersTotal(self, request: HistoryOrdersTotalRequest, context) -> HistoryOrdersTotalResponse:
-        """Get total number of orders in trading history within specified period.
-
-        Args:
-            request: HistoryOrdersTotalRequest containing time period
-            context: gRPC context
-
-        Returns:
-            HistoryOrdersTotalResponse containing total count or error
-        """
+        """Get total number of orders in trading history within specified period."""
         response = HistoryOrdersTotalResponse()
-
-        # Ensure MT5 is initialized
-        initialized, error = self._ensure_initialized()
-        if not initialized:
-            response.error.CopyFrom(error)
-            return response
 
         try:
             total = mt5.history_orders_total(
@@ -158,4 +117,4 @@ class HistoryOrdersServiceImpl(HistoryOrdersServiceServicer):
         except Exception as e:
             response.error.code = -1  # RES_E_FAIL
             response.error.message = f"Internal error getting orders total: {str(e)}"
-            return response 
+            return response

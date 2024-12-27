@@ -5,12 +5,15 @@ import grpc
 from mt5_grpc_proto import common_pb2, common_pb2_grpc, position_pb2, deal_pb2, history_orders_pb2_grpc, position_pb2_grpc, \
     symbol_info_pb2_grpc, history_orders_pb2, terminal_pb2, symbols_pb2_grpc, order_pb2, terminal_pb2_grpc
 from mt5_grpc_proto import symbol_info_pb2, deal_pb2_grpc, order_pb2_grpc, symbols_pb2
+from mt5_grpc_proto import account_pb2_grpc, account_pb2
 
 if __name__ == '__main__':
     with (grpc.insecure_channel('192.168.10.100:50051') as channel):
         # Connect to MetaTrader
         mt = common_pb2_grpc.MetaTraderServiceStub(channel)
-        mt.Connect(common_pb2.Empty())
+        # mt.Connect(common_pb2.Empty())
+
+        mt.Connect(common_pb2.ConnectRequest(path="C:\\Program Files\\MetaTrader 5\\terminal64.exe"))
 
         # Get terminal info
         terminal = terminal_pb2_grpc.TerminalInfoServiceStub(channel)
@@ -18,12 +21,17 @@ if __name__ == '__main__':
         print("Terminal Info:")
         print(terminal_info)
 
-        # Get symbols service stub
+        # # Get symbols service stub
         symbols = symbols_pb2_grpc.SymbolsServiceStub(channel)
-        
+
         # Get list of all symbols
         symbols_list = symbols.GetSymbols(symbols_pb2.SymbolsGetRequest())
         print("Available symbols:", [symbol for symbol in symbols_list.symbols])
+
+        # Get account info
+        account = account_pb2_grpc.AccountInfoServiceStub(channel)
+        account_info = account.GetAccountInfo(account_pb2.AccountInfoRequest())
+        print(account_info)
         
         # Select random symbol and set it as active
         if symbols_list.symbols:
