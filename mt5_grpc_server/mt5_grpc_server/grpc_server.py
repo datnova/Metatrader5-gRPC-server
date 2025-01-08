@@ -1,8 +1,10 @@
 import argparse
 from concurrent import futures
 import grpc
+import logging
 from mt5_grpc_proto import *
 from .imp import *
+from .logging_interceptor import VerboseLoggingInterceptor
 
 def load_credentials(cert_file, private_key_file):
     # Read the certificate and private key files
@@ -17,6 +19,16 @@ def load_credentials(cert_file, private_key_file):
     )
     return server_credentials
 
+def setup_logging(verbose):
+    logger = logging.getLogger('mt5_grpc_server')
+    logger.setLevel(logging.INFO if verbose else logging.WARNING)
+    
+    # Create console handler with formatting
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    return logger
 
 def main():
     parser = argparse.ArgumentParser(
@@ -49,13 +61,30 @@ def main():
         type=str,
         help="Path to the private key file (required if --secure is used)"
     )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable verbose logging of all requests and responses"
+    )
     args = parser.parse_args()
 
     if args.secure and (not args.cert_file or not args.private_key_file):
         parser.error("--cert-file and --private-key-file are required when using --secure")
 
-    print(f"Starting gRPC server on {args.host}:{args.port} {'(secure)' if args.secure else '(insecure)'}")
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    # Setup logging
+    logger = setup_logging(args.verbose)
+    logger.info(f"Starting gRPC server on {args.host}:{args.port} {'(secure)' if args.secure else '(insecure)'}")
+
+    # Create interceptors list
+    interceptors = []
+    if args.verbose:
+        interceptors.append(VerboseLoggingInterceptor())
+
+    # Create server with interceptors
+    server = grpc.server(
+        futures.ThreadPoolExecutor(max_workers=10),
+        interceptors=interceptors
+    )
 
     # Add all services to the server
     account_pb2_grpc.add_AccountInfoServiceServicer_to_server(AccountInfoServiceImpl(), server)
