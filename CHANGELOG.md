@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-01-08
+
+### Added
+- Verbose logging functionality with a new `--verbose` command-line option
+- Logging interceptor for detailed request and response logging
+- Bump version script for easier version management
+
+### Changed
+- Improved README with additional use case diagrams
+- Removed excessive MT5 initialization and shutdown code for better performance
+- Updated package version to 0.1.1 in setup files
+
 ## [0.1.0] - 2024-12-25
 
 ### Added
