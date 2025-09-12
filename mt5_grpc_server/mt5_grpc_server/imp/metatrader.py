@@ -36,13 +36,13 @@ class MetaTraderServiceImpl(MetaTraderServiceServicer):
             # If path is provided, set the MetaTrader5 path
         if request.path:
             # Set the path for MetaTrader5 initialization
-            if not mt5.initialize(path=request.path):
+            if not mt5.initialize(path=request.path, login=request.login, password=request.password, server=request.server):
                 error_code, error_message = mt5.last_error()
                 context.abort(grpc.StatusCode.INTERNAL, f"Failed to initialize MetaTrader5 ({request.path}): {error_message}")
                 return None
         else:
             # Initialize with default path
-            if not mt5.initialize():
+            if not mt5.initialize(login=request.login, password=request.password, server=request.server):
                 error_code, error_message = mt5.last_error()
                 context.abort(grpc.StatusCode.INTERNAL, f"Failed to initialize default MetaTrader5: {error_message}")
                 return None
