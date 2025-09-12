@@ -26,6 +26,15 @@ message Empty {}
 
 message ConnectRequest {
   optional string path = 1;  // Optional path to MetaTrader executable, use default if not specified
+
+  // Account number
+  optional int64 login = 2;
+  
+  // Password
+  optional string password = 3;
+
+  // Trade server
+  optional string server = 4;
 }
 
 message TimeFilter {

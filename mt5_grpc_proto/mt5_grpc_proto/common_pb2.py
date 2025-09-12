@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x63ommon.proto\x12\rmetatrader.v1\"&\n\x05\x45rror\x12\x0c\n\x04\x63ode\x18\x01 \x01(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x15\n\x13GetLastErrorRequest\";\n\x14GetLastErrorResponse\x12#\n\x05\x65rror\x18\x01 \x01(\x0b\x32\x14.metatrader.v1.Error\"\x07\n\x05\x45mpty\",\n\x0e\x43onnectRequest\x12\x11\n\x04path\x18\x01 \x01(\tH\x00\x88\x01\x01\x42\x07\n\x05_path\"0\n\nTimeFilter\x12\x11\n\tdate_from\x18\x01 \x01(\x03\x12\x0f\n\x07\x64\x61te_to\x18\x02 \x01(\x03\x32\x9e\x01\n\x11MetaTraderService\x12>\n\x07\x43onnect\x12\x1d.metatrader.v1.ConnectRequest\x1a\x14.metatrader.v1.Error\x12I\n\x0cGetLastError\x12\x14.metatrader.v1.Empty\x1a#.metatrader.v1.GetLastErrorResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x63ommon.proto\x12\rmetatrader.v1\"&\n\x05\x45rror\x12\x0c\n\x04\x63ode\x18\x01 \x01(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x15\n\x13GetLastErrorRequest\";\n\x14GetLastErrorResponse\x12#\n\x05\x65rror\x18\x01 \x01(\x0b\x32\x14.metatrader.v1.Error\"\x07\n\x05\x45mpty\"\x8e\x01\n\x0e\x43onnectRequest\x12\x11\n\x04path\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x12\n\x05login\x18\x02 \x01(\x03H\x01\x88\x01\x01\x12\x15\n\x08password\x18\x03 \x01(\tH\x02\x88\x01\x01\x12\x13\n\x06server\x18\x04 \x01(\tH\x03\x88\x01\x01\x42\x07\n\x05_pathB\x08\n\x06_loginB\x0b\n\t_passwordB\t\n\x07_server\"0\n\nTimeFilter\x12\x11\n\tdate_from\x18\x01 \x01(\x03\x12\x0f\n\x07\x64\x61te_to\x18\x02 \x01(\x03\x32\x9e\x01\n\x11MetaTraderService\x12>\n\x07\x43onnect\x12\x1d.metatrader.v1.ConnectRequest\x1a\x14.metatrader.v1.Error\x12I\n\x0cGetLastError\x12\x14.metatrader.v1.Empty\x1a#.metatrader.v1.GetLastErrorResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -39,10 +39,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_GETLASTERRORRESPONSE']._serialized_end=153
   _globals['_EMPTY']._serialized_start=155
   _globals['_EMPTY']._serialized_end=162
-  _globals['_CONNECTREQUEST']._serialized_start=164
-  _globals['_CONNECTREQUEST']._serialized_end=208
-  _globals['_TIMEFILTER']._serialized_start=210
-  _globals['_TIMEFILTER']._serialized_end=258
-  _globals['_METATRADERSERVICE']._serialized_start=261
-  _globals['_METATRADERSERVICE']._serialized_end=419
+  _globals['_CONNECTREQUEST']._serialized_start=165
+  _globals['_CONNECTREQUEST']._serialized_end=307
+  _globals['_TIMEFILTER']._serialized_start=309
+  _globals['_TIMEFILTER']._serialized_end=357
+  _globals['_METATRADERSERVICE']._serialized_start=360
+  _globals['_METATRADERSERVICE']._serialized_end=518
 # @@protoc_insertion_point(module_scope)
