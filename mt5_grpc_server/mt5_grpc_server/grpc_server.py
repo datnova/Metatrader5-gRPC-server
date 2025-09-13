@@ -2,6 +2,7 @@ import argparse
 from concurrent import futures
 import grpc
 import logging
+import MetaTrader5 as mt5
 from mt5_grpc_proto import *
 from .imp import *
 from .logging_interceptor import VerboseLoggingInterceptor
@@ -66,7 +67,15 @@ def main():
         action="store_true",
         help="Enable verbose logging of all requests and responses"
     )
+    parser.add_argument(
+        "--skip-login",
+        action="store_true",
+        help="Bypass login when a MetaTrader5 session is already active and initialize immediately."
+    )
     args = parser.parse_args()
+
+    if args.skip_login:
+        mt5.initialize()
 
     if args.secure and (not args.cert_file or not args.private_key_file):
         parser.error("--cert-file and --private-key-file are required when using --secure")
